@@ -44,7 +44,8 @@ export class SlackModule implements OnApplicationBootstrap {
       providers: [
         {
           provide: SLACK_MODULE_OPTIONS,
-          useValue: options,
+          useFactory: options.useFactory,
+          useValue: options.useFactory ? undefined : options,
         },
         ExplorerService,
         LoggerProxy,
