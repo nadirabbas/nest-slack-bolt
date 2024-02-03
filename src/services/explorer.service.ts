@@ -8,6 +8,7 @@ import {
   SLACK_COMMAND_METADATA,
   SLACK_EVENT_METADATA,
   SLACK_MESSAGE_METADATA,
+  SLACK_MIDDLEWARE_METADATA,
   SLACK_SHORTCUT_METADATA,
   SLACK_VIEW_METADATA,
 } from '../decorators/constants';
@@ -49,7 +50,19 @@ export class ExplorerService {
       this.filterProvider(instance, SLACK_VIEW_METADATA),
     );
 
-    return { messages, actions, commands, events, shortcuts, views };
+    const middleware = this.flatMap(modules, (instance) =>
+      this.filterProvider(instance, SLACK_MIDDLEWARE_METADATA),
+    );
+
+    return {
+      messages,
+      actions,
+      commands,
+      events,
+      shortcuts,
+      views,
+      middleware,
+    };
   }
 
   flatMap<T>(

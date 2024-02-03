@@ -1,6 +1,11 @@
 import { Inject, Injectable, Logger, OnModuleInit, Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { App } from '@slack/bolt';
+import {
+  AllMiddlewareArgs,
+  AnyMiddlewareArgs,
+  App,
+  Middleware,
+} from '@slack/bolt';
 import {
   SLACK_ACTION_METADATA,
   SLACK_COMMAND_METADATA,
@@ -11,6 +16,7 @@ import {
 } from '../decorators/constants';
 import { InvalidEventException } from '../exceptions/invalid-event.exception';
 import { IMetadataBase } from '../interfaces/metadata/metadata.interface';
+import { StringIndexed } from '@slack/bolt/dist/types/helpers';
 
 const MESSAGE = 'Message';
 const COMMAND = 'Command';
@@ -45,6 +51,19 @@ export class SlackService implements OnModuleInit {
    */
   get client() {
     return this._app.client;
+  }
+
+  registerMiddleware(
+    middlewares: Middleware<AnyMiddlewareArgs, StringIndexed>[],
+  ) {
+    middlewares.forEach((middleware) => {
+      const instance = this.moduleRef.get(middleware, { strict: false });
+      if (!instance) {
+        throw new InvalidEventException();
+      }
+      this._app.use(middleware);
+      this._logger.log(`Registered middleware: ${middleware.name}`);
+    });
   }
 
   registerMessages(messages: Type<unknown>[]) {

@@ -4,3 +4,4 @@ export const SLACK_COMMAND_METADATA = 'slack:command';
 export const SLACK_EVENT_METADATA = 'slack:event';
 export const SLACK_SHORTCUT_METADATA = 'slack:shortcut';
 export const SLACK_VIEW_METADATA = 'slack:view';
+export const SLACK_MIDDLEWARE_METADATA = 'slack:middleware';
